@@ -1,0 +1,100 @@
+brew update
+brew update terraform
+nrew update gcloud
+
+{Created a project mikey-terraform-admin }
+export TF_ADMIN=mikey-tfdminspn
+export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json
+
+gcloud iam service-accounts create tfdminspn \
+  --display-name "Terraform admin account"
+
+# grant the Service Account Key Admin role
+
+gcloud iam service-accounts keys create ${TF_CREDS} \
+  --iam-account tfdminspn@$gitops-280007.iam.gserviceaccount.com
+
+copy credentials to ~/.config/gcloud/terraform-admin.json
+
+
+gcloud projects add-iam-policy-binding mikey-terraform-admin \
+  --member serviceAccount:tfadminspn@mikey-terraform-admin.iam.gserviceaccount.com \
+  --role roles/viewer
+
+gcloud projects add-iam-policy-binding mikey-terraform-admin \
+  --member serviceAccount:tfadminspn@mikey-terraform-admin.iam.gserviceaccount.com \
+  --role roles/storage.admin
+
+gcloud projects add-iam-policy-binding mikey-terraform-admin \
+  --member serviceAccount:tfadminspn@mikey-terraform-admin.iam.gserviceaccount.com \
+  --role roles/compute.admin
+
+gcloud projects add-iam-policy-binding mikey-terraform-admin \
+  --member serviceAccount:tfadminspn@mikey-terraform-admin.iam.gserviceaccount.com \
+  --role roles/compute.networkAdmin
+
+gcloud projects add-iam-policy-binding mikey-terraform-admin \
+  --member serviceAccount:tfadminspn@mikey-terraform-admin.iam.gserviceaccount.com \
+  --role roles/iam.serviceAccountAdmin
+
+
+
+gcloud organizations add-iam-policy-binding 530263278955 \
+  --member serviceAccount:tfadminspn@mikey-terraform-admin.iam.gserviceaccount.com \
+  --role roles/resourcemanager.projectCreator
+
+gcloud organizations add-iam-policy-binding 530263278955 \
+  --member serviceAccount:tfadminspn@mikey-terraform-admin.iam.gserviceaccount.com \
+  --role roles/billing.user
+
+gsutil mb -l australia-southeast1 -p mikey-terraform-admin gs://mikey-terraform-admin-tfstate
+
+cat > backend.tf << EOF
+terraform {
+ backend "gcs" {
+   bucket  = "mikey-terraform-admin"
+   prefix  = "terraform/state"
+ }
+}
+EOF
+
+gsutil versioning set on gs://mikey-terraform-admin-tfstate
+
+
+Create a directory on the local file system.
+Select Clone "Clone or download" on Github, copy the link
+In Visual Studio Code, sect File -> Add Folder to Workspace -> Select the newly created directory
+Click on source control
+Publish to Github
+
+source control  ... Sync
+
+vscode://vscode.github-authentication/did-authenticate?windowId=1&code=174976174b7137e65e3f&state=d1c34796-89b9-43a7-9ce1-c363c48e16e8
+
+
+gcloud auth login     {mikey}
+
+PROJECT_ID=$(gcloud config get-value project)
+
+gsutil versioning set on gs://${PROJECT_ID}-tfstate
+
+{from root dir}
+git status
+git add --all
+git commit -m "Update project IDs and buckets"
+git push origin master
+
+{enbale cloud build & billing in the GUI }
+
+CLOUDBUILD_SA="$(gcloud projects describe $PROJECT_ID \
+    --format 'value(projectNumber)')@cloudbuild.gserviceaccount.com"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member serviceAccount:$CLOUDBUILD_SA --role roles/editor
+
+{added GitHub Project to CLoud Build}
+
+
+gsutil cat gs://mikey-terraform-admin-tfstate/env/prod/default.tflock
+
+terraform force-unlock -force 78dfb48d-ef47-2688-d145-c1c751e3fef9
