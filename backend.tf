@@ -1,6 +1,6 @@
 terraform {
  backend "gcs" {
    bucket  = "shanil-terraform-admin"
-   prefix  = "terraform/state1"
+   prefix  = "terraform/state"
  }
 }
