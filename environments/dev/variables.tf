@@ -1,7 +1,10 @@
 variable "var_project" {
+    type = string
+    default = "shanis-project-289203"
 }
-
 variable "var_region" {
+    type = string
+    default = "australia-southeast1"
 }
 variable "var_machine_name" {
     type = string
