@@ -4,7 +4,7 @@ locals {
 
 module "vpc" {
   #source  = "../../modules/vpc"
-  source = "github.com/shanilevy/GCP-GitOps.git//modules/vpc?ref=dev"
+  source = "github.com/shanilevy/GCP-GitOps/modules/vpc?ref=dev"
   var_project = var.var_project
   var_region  = var.var_region
   var_env     = local.env
@@ -12,7 +12,7 @@ module "vpc" {
 
 module "http_server" {
   #source  = "../../modules/http_server"
-  source = "github.com/shanilevy/GCP-GitOps.git//modules/http_server?ref=dev"
+  source = "github.com/shanilevy/GCP-GitOps/modules/http_server?ref=dev"
   var_project = var.var_project
   var_machine_name = var.var_machine_name
   var_machine_size = var.var_machine_size
@@ -21,7 +21,7 @@ module "http_server" {
 
 module "firewall" {
   #source  = "../../modules/firewall"
-  source = "github.com/shanilevy/GCP-GitOps.git//modules/firewall?ref=dev"
+  source = "github.com/shanilevy/GCP-GitOps/modules/firewall?ref=dev"
   var_project = var.var_project
   var_subnet  = module.vpc.subnet
 }
