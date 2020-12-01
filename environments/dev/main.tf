@@ -4,7 +4,7 @@ locals {
 
 module "vpc" {
   #source  = "../../modules/vpc"
-  source = "github.com/shanilevy/GCP-GitOps/modules/vpc?ref=dev"
+  source = "github.com/shanilevy/GCP-GitOps?ref=dev"
   var_project = var.var_project
   var_region  = var.var_region
   var_env     = local.env
